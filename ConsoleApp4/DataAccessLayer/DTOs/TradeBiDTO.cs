@@ -21,7 +21,7 @@ namespace ConsoleApp4.DataAccessLayer.DTOs
         public const string TradeBIexitType = "ExitType";
         public const string TradeBIstartDate = "StartDate";
         public const string TradeBIendDate = "EndDate";
-        public const string TradeBIduration = "TradeDuartion_Minute";
+        public const string TradeBIduration = "TradeDuartionMinute";
         public const string TradeBIcurrEntryPrice = "StartPrice";
         public const string TradeBIcurrExitPrice = "EndPrice";
         public const string TradeBItradeContracts = "Contracts";
@@ -30,11 +30,11 @@ namespace ConsoleApp4.DataAccessLayer.DTOs
         public const string TradeBItradeCommission = "Commission";
         public const string TradeBIprofit = "Profit";
         public const string TradeBIdrawDown = "DrawDown";
-        public const string TradeBIdrawDownPercent = "DrawDown_Percent";
-        public const string TradeBIrunUp = "Run_up";
-        public const string TradeBIrunUpPrecent = "Run_up_Percent";
+        public const string TradeBIdrawDownPercent = "DrawDownPercent";
+        public const string TradeBIrunUp = "RunUp";
+        public const string TradeBIrunUpPrecent = "RunUpPercent";
   
-
+    
         private readonly Controllers.TradeBi _controller;
 
         public TradeBiDTO(string posTradeID, string traderName, string brokerName,string Symbol, string accountID, string accountSize, 
@@ -63,11 +63,16 @@ namespace ConsoleApp4.DataAccessLayer.DTOs
            TradetradeCommission = Commission;
            Tradeprofit = Profit;
            TradedrawDown = Drawdown;
-           TradedrawDownPrecent = Drawdown_percent;
+           TradedrawDownPercent = Drawdown_percent;
            TraderunUp = Run_up;
            TraderunUpPercent = Run_up_percernt;
-          
-           _controller = new Controllers.TradeBi();
+
+
+
+
+
+
+            _controller = new Controllers.TradeBi();
         }
 
         public string TradeposTradeID { get; set; }
@@ -91,7 +96,7 @@ namespace ConsoleApp4.DataAccessLayer.DTOs
         public string TradetradeCommission { get; set; }
         public string Tradeprofit { get; set; }
         public string TradedrawDown { get; set; }
-        public string TradedrawDownPrecent { get; set; }
+        public string TradedrawDownPercent { get; set; }
         public string TraderunUp { get; set; }
         public string TraderunUpPercent { get; set; }
         

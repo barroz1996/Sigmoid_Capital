@@ -1,7 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SQLite;
+
 using Microsoft.Extensions.Logging;
+using System.Data.SqlClient;
+using System.Diagnostics.Eventing.Reader;
+using System.IO;
+using System.Net.Mail;
+using System.Net.Http;
+using System.Text;
+
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace ConsoleApp4.DataAccessLayer.Controllers
 {
@@ -14,86 +25,138 @@ namespace ConsoleApp4.DataAccessLayer.Controllers
         {
         }
 
-        public bool Insert(DTOs.TradeBiDTO Trade) //Creates a new task in the database.
+        public async Task<bool> InsertAsync(DTOs.TradeBiDTO Trade) //Creates a new task in the database.
         {
-            using (var connection = new SQLiteConnection(_connectionString))
+            using (var connection = new SqlConnection(@"Data Source=DESKTOP-0G3N8AU;Initial Catalog=TradeBIDataBase;Integrated Security=True"))
             {
-                var command = new SQLiteCommand(connection);
+                
+                connection.Open();
+                SqlCommand cmd = new SqlCommand("Insert into TableBIT values(@tradeID,@trader,@broker,@symbol,@accountID,@accountSize,@strategyName,@profile,@entryType,@exitType,@startDate,@endDate,@tradeDurationMinute,@startPrice,@endPrice,@contracts,@positionSize,@margin,@commission,@profit,@drawDown,@drawDownPercent,@runUp,@runUpPercent)", connection);
+                //var command = new SQLiteCommand(connection);
                 int res = -1;
                 try
                 {
-                    connection.Open();
-                   // command.CommandText = $"INSERT INTO {_tableName}  ({DTOs.TradeBiDTO.TasksIdColumnId} ,{DTOs.TradeBiDTO.TasksTitleColumnTitle}) " +
-                     //   $"VALUES (@idVal,@titleVal);";
-                     command.CommandText = $"INSERT INTO {_tableName}  ({DTOs.TradeBiDTO.TradeBIposTradeID} ,{DTOs.TradeBiDTO.TradeBItraderName},{DTOs.TradeBiDTO.TradeBIbrokerName}, {DTOs.TradeBiDTO.TradeBISymbol},{DTOs.TradeBiDTO.TradeBIaccountID},{DTOs.TradeBiDTO.TradeBIaccountSize},{DTOs.TradeBiDTO.TradeBIcurrStrategyName},{DTOs.TradeBiDTO.TradeBItradeProfile},{DTOs.TradeBiDTO.TradeBIentryType},{DTOs.TradeBiDTO.TradeBIexitType},{DTOs.TradeBiDTO.TradeBIstartDate},{DTOs.TradeBiDTO.TradeBIendDate},{DTOs.TradeBiDTO.TradeBIduration},{DTOs.TradeBiDTO.TradeBIcurrEntryPrice},{DTOs.TradeBiDTO.TradeBIcurrExitPrice},{DTOs.TradeBiDTO.TradeBItradeContracts},{DTOs.TradeBiDTO.TradeBIpositionSize},{DTOs.TradeBiDTO.TradeBItradeMargin},{DTOs.TradeBiDTO.TradeBItradeCommission},{DTOs.TradeBiDTO.TradeBIprofit},{DTOs.TradeBiDTO.TradeBIdrawDown},{DTOs.TradeBiDTO.TradeBIdrawDownPercent},{DTOs.TradeBiDTO.TradeBIrunUp},{DTOs.TradeBiDTO.TradeBIrunUpPrecent}) "+
-                        $"VALUES (@tradeIDVal,@traderVal,@brokerVal,@symbolVal,@accountIDVal,@accountSizeVal,@StartegyNameVal,@profileVal,@entryTypeVal,@exitTypeVal,@startDateVal,@endDateVal,@durationVal ,@startPriceVal,@endPriceVal,@contractsVal,@positionSizeVal,@marginVal,@commissionVal,@profitVal,@drawDownVal,@drawDownPercentVal,@runUpVal,@runUpPercentVal);";
-                    
 
-                    var traderIDParam = new SQLiteParameter(@"tradeIDVal", Trade.TradeposTradeID);
-                    var traderParam = new SQLiteParameter(@"traderVal", Trade.TradetraderName);
-                    var brokerParam = new SQLiteParameter(@"brokerVal", Trade.TradebrokerName);
-                    var symbolParam = new SQLiteParameter(@"symbolVal", Trade.TradeSymbol);
-                    var accountIDParam = new SQLiteParameter(@"accountIDVal", Trade.TradeaccountID);
-                    var accountSizeParam = new SQLiteParameter(@"accountSizeVal", Trade.TradeaccountSize);
-                    var startegySizeParam = new SQLiteParameter(@"StartegyNameVal", Trade.TradecurrStrategyName);
-                    var profileParam = new SQLiteParameter(@"profileVal", Trade.TradetradeProfile);
-                    var entryTypeParam = new SQLiteParameter(@"entryTypeVal", Trade.TradeentryType);
-                    var exitTypeParam = new SQLiteParameter(@"exitTypeVal", Trade.TradeexitType);
-                    var start_dateParam = new SQLiteParameter(@"startDateVal", Trade.TradestartDate);
-                    var end_dateParam = new SQLiteParameter(@"endDateVal", Trade.TradeendDate);
-                    var durationParam = new SQLiteParameter(@"durationVal", Trade.Tradeduration);
-                    var start_priceParam = new SQLiteParameter(@"startPriceVal", Trade.TradecurrEntryPrice);
-                    var end_priceParam = new SQLiteParameter(@"endPriceVal", Trade.TradecurrExitPrice);
-                    var contractsParam = new SQLiteParameter(@"contractsVal", Trade.TradetradeContracts);
-                    var position_sizeParam = new SQLiteParameter(@"positionSizeVal", Trade.TradepositionSize);
-                    var marginParam = new SQLiteParameter(@"marginVal", Trade.TradetradeMargin);
-                    var commissionParam = new SQLiteParameter(@"commissionVal", Trade.TradetradeCommission);
-                    var profitParam = new SQLiteParameter(@"profitVal", Trade.Tradeprofit);
-                    var drawDownParam = new SQLiteParameter(@"drawDownVal", Trade.TradedrawDown);
-                    var drawDownPercentParam = new SQLiteParameter(@"drawDownPercentVal", Trade.TradedrawDownPrecent);
-                    var runUpParam = new SQLiteParameter(@"runUpVal", Trade.TraderunUp);
-                    var runUpPercentParam = new SQLiteParameter(@"runUpPercentVal", Trade.TraderunUpPercent);
-                 
-                  
 
-                    command.Parameters.Add(traderIDParam);
-                    command.Parameters.Add(traderParam);
-                    command.Parameters.Add(brokerParam);
-                   
-                    command.Parameters.Add(symbolParam);
-                    command.Parameters.Add(accountIDParam);
-                    command.Parameters.Add(accountSizeParam);
-                    command.Parameters.Add(startegySizeParam);
-                    command.Parameters.Add(profileParam);
-                    command.Parameters.Add(entryTypeParam);
-                    command.Parameters.Add(exitTypeParam);
-                    command.Parameters.Add(start_dateParam);
-                    command.Parameters.Add(end_dateParam);
-                    command.Parameters.Add(durationParam);
-                    command.Parameters.Add(start_priceParam);
-                    command.Parameters.Add(end_priceParam);
-                    command.Parameters.Add(contractsParam);
-                    command.Parameters.Add(position_sizeParam);
-                    command.Parameters.Add(marginParam);
-                    command.Parameters.Add(commissionParam);
-                    command.Parameters.Add(profitParam);
-                    command.Parameters.Add(drawDownParam);
-                    command.Parameters.Add(drawDownPercentParam);
-                    command.Parameters.Add(runUpParam);
-                    command.Parameters.Add(runUpPercentParam);
-                 
-                
-      
-                    command.Prepare();
-                    res = command.ExecuteNonQuery();
+                    cmd.Parameters.AddWithValue("@tradeID", Trade.TradeposTradeID);
+                    cmd.Parameters.AddWithValue("@trader", Trade.TradetraderName);
+                    cmd.Parameters.AddWithValue("@broker", Trade.TradebrokerName);
+                    cmd.Parameters.AddWithValue("@symbol", Trade.TradeSymbol);
+                    cmd.Parameters.AddWithValue("@accountID", Trade.TradeaccountID);
+
+                    if (!string.Equals(Trade.TradeaccountSize, "Null"))
+                        cmd.Parameters.AddWithValue("@accountSize", float.Parse(Trade.TradeaccountSize));
+                    else
+                        cmd.Parameters.AddWithValue("@accountSize", DBNull.Value);
+
+
+                    cmd.Parameters.AddWithValue("@strategyName", Trade.TradecurrStrategyName);
+                    cmd.Parameters.AddWithValue("@profile", Trade.TradetradeProfile);
+                    cmd.Parameters.AddWithValue("@entryType", Trade.TradeentryType);
+                    cmd.Parameters.AddWithValue("@exitType", Trade.TradeexitType);
+
+                    if (!string.Equals(Trade.TradestartDate, "Null"))
+                        cmd.Parameters.AddWithValue("@startDate", DateTime.Parse(Trade.TradestartDate));
+                    else
+                        cmd.Parameters.AddWithValue("@startDate", DBNull.Value);
+
+                    if (!string.Equals(Trade.TradeendDate, "Null"))
+                        cmd.Parameters.AddWithValue("@endDate", DateTime.Parse(Trade.TradeendDate));
+                    else
+                        cmd.Parameters.AddWithValue("@endDate", DBNull.Value);
+
+                    if (!string.Equals(Trade.Tradeduration, "Null"))
+                        cmd.Parameters.AddWithValue("@tradeDurationMinute", float.Parse(Trade.Tradeduration));
+                    else
+                        cmd.Parameters.AddWithValue("@tradeDurationMinute", DBNull.Value);
+
+                    if (!string.Equals(Trade.TradecurrEntryPrice, "Null"))
+                        cmd.Parameters.AddWithValue("@startPrice", float.Parse(Trade.TradecurrEntryPrice));
+                    else
+                        cmd.Parameters.AddWithValue("@startPrice", DBNull.Value);
+
+                    if (!string.Equals(Trade.TradecurrExitPrice, "Null"))
+                        cmd.Parameters.AddWithValue("@endPrice", float.Parse(Trade.TradecurrExitPrice));
+                    else
+                        cmd.Parameters.AddWithValue("@endPrice", DBNull.Value);
+
+                    if (!string.Equals(Trade.TradetradeContracts, "Null"))
+                        cmd.Parameters.AddWithValue("@contracts", float.Parse(Trade.TradetradeContracts));
+                    else
+                        cmd.Parameters.AddWithValue("@contracts", DBNull.Value);
+
+                    if (!string.Equals(Trade.TradepositionSize, "Null"))
+                        cmd.Parameters.AddWithValue("@positionSize", float.Parse(Trade.TradepositionSize));
+                    else
+                        cmd.Parameters.AddWithValue("@positionSize", DBNull.Value);
+
+                    if (!string.Equals(Trade.TradetradeMargin, "Null"))
+                        cmd.Parameters.AddWithValue("@margin", float.Parse(Trade.TradetradeMargin));
+                    else
+                        cmd.Parameters.AddWithValue("@margin", DBNull.Value);
+
+                    if (!string.Equals(Trade.TradetradeCommission, "Null"))
+                        cmd.Parameters.AddWithValue("@commission", float.Parse(Trade.TradetradeCommission));
+                    else
+                        cmd.Parameters.AddWithValue("@commission", DBNull.Value);
+
+                    if (!string.Equals(Trade.Tradeprofit, "Null"))
+                        cmd.Parameters.AddWithValue("@profit", float.Parse(Trade.Tradeprofit));
+                    else
+                        cmd.Parameters.AddWithValue("@profit", DBNull.Value);
+
+                    if (!string.Equals(Trade.TradedrawDown, "Null"))
+                        cmd.Parameters.AddWithValue("@drawDown", float.Parse(Trade.TradedrawDown));
+                    else
+                        cmd.Parameters.AddWithValue("@drawDown", DBNull.Value);
+
+                    if (!string.Equals(Trade.TradedrawDownPercent, "Null"))
+                        cmd.Parameters.AddWithValue("@drawDownPercent", float.Parse(Trade.TradedrawDownPercent));
+                    else
+                        cmd.Parameters.AddWithValue("@drawDownPercent", DBNull.Value);
+
+                    if (!string.Equals(Trade.TraderunUp, "Null"))
+                        cmd.Parameters.AddWithValue("@runUp", float.Parse(Trade.TraderunUp));
+                    else
+                        cmd.Parameters.AddWithValue("@runUp", DBNull.Value);
+
+                    if (!string.Equals(Trade.TraderunUpPercent, "Null"))
+                        cmd.Parameters.AddWithValue("@runUpPercent", float.Parse(Trade.TraderunUpPercent));
+                    else
+                        cmd.Parameters.AddWithValue("@runUpPercent", DBNull.Value); 
+                    cmd.ExecuteNonQuery();
+
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
+                    StreamWriter sw = new StreamWriter("log.txt", true);
+                    sw.WriteLine(e.Message);
+                    sw.Close();
+                    // Console.WriteLine(e);
+                    // var WebHookUrl = "https://hooks.slack.com/services/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";
+                    
+
+                    var errorObj = new
+                    {
+                        Message = e.Message,
+   
+                    };
+                    var errorJson = JsonConvert.SerializeObject(errorObj);
+                    var mainObj = new
+                    {
+                        Error = errorJson
+                    };
+                    var mainJson = JsonConvert.SerializeObject(mainObj);
+                    Console.WriteLine(mainJson);
+                    // var httpClient = new HttpClient();
+                    // var webhookUrl = "https://hooks.slack.com/services/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";
+                    // var payload = "{\"text\": \"Hello, Slack!\"}";
+                     //var content = new StringContent(mainJson, Encoding.UTF8, "application/json");
+                    // var response = await httpClient.PostAsync(webhookUrl, content);
                 }
                 finally
                 {
-                    command.Dispose();
+               
                     connection.Close();
 
                 }

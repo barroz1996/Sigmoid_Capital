@@ -125,7 +125,6 @@ C:\Users\Lenovo\source\repos\ConsoleApp4\ConsoleApp4\bin\Debug\System.Numerics.V
 C:\Users\Lenovo\source\repos\ConsoleApp4\ConsoleApp4\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
 C:\Users\Lenovo\source\repos\ConsoleApp4\ConsoleApp4\obj\Debug\ConsoleApp4.exe.config
 C:\Users\Lenovo\source\repos\ConsoleApp4\ConsoleApp4\obj\Debug\ConsoleApp4.csproj.CopyComplete
-C:\Users\Lenovo\Desktop\Sigmoid\ConsoleApp4\ConsoleApp4\obj\Debug\ConsoleApp4.csprojAssemblyReference.cache
 C:\Users\Lenovo\Desktop\Sigmoid\ConsoleApp4\ConsoleApp4\obj\Debug\ConsoleApp4.exe.config
 C:\Users\Lenovo\Desktop\Sigmoid\ConsoleApp4\ConsoleApp4\obj\Debug\ConsoleApp4.csproj.CoreCompileInputs.cache
 C:\Users\Lenovo\Desktop\Sigmoid\ConsoleApp4\ConsoleApp4\obj\Debug\ConsoleApp4.exe
@@ -271,3 +270,9 @@ C:\Users\Lenovo\Desktop\Sigmoid\ConsoleApp4\ConsoleApp4\bin\Debug\Microsoft.Exte
 C:\Users\Lenovo\Desktop\Sigmoid\ConsoleApp4\ConsoleApp4\bin\Debug\Microsoft.Extensions.Primitives.xml
 C:\Users\Lenovo\Desktop\Sigmoid\ConsoleApp4\ConsoleApp4\bin\Debug\System.Diagnostics.DiagnosticSource.xml
 C:\Users\Lenovo\Desktop\Sigmoid\ConsoleApp4\ConsoleApp4\bin\Debug\System.Threading.Tasks.Extensions.xml
+C:\Users\Lenovo\Desktop\Sigmoid\ConsoleApp4\ConsoleApp4\bin\Debug\System.Data.SqlClient.dll
+C:\Users\Lenovo\Desktop\Sigmoid\ConsoleApp4\ConsoleApp4\bin\Debug\System.Data.SqlClient.xml
+C:\Users\Lenovo\Desktop\Sigmoid\ConsoleApp4\ConsoleApp4\obj\Debug\ConsoleApp4.csproj.AssemblyReference.cache
+C:\Users\Lenovo\Desktop\Sigmoid\ConsoleApp4\ConsoleApp4\obj\Debug\ConsoleApp4.csproj.SuggestedBindingRedirects.cache
+C:\Users\Lenovo\Desktop\Sigmoid\ConsoleApp4\ConsoleApp4\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Lenovo\Desktop\Sigmoid\ConsoleApp4\ConsoleApp4\bin\Debug\Newtonsoft.Json.xml

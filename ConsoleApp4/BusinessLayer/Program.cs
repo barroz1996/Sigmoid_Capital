@@ -4,6 +4,7 @@ using System.Linq;
 using ConsoleApp4.DataAccessLayer;
 using System.Threading;
 using Microsoft.Extensions.Logging;
+using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
 
 namespace ConsoleApp4.BusinessLayer
 
@@ -11,18 +12,17 @@ namespace ConsoleApp4.BusinessLayer
 {
     class Program
     {   
-        // int k=0;
         private static DataAccessLayer.Controllers.TradeBi TradeCon = new DataAccessLayer.Controllers.TradeBi();
         static void Main(string[] args)
         {
            
             var watcher = new FileSystemWatcher(@"C:\Users\Lenovo\Desktop\Sigmoid");
-
             watcher.Changed += new FileSystemEventHandler(OnChanged);
-           // watcher.Created += new FileSystemEventHandler(OnChanged);
-           // watcher.Error += new FileSystemEventHandler(OnError);
-         
             
+            // watcher.Created += new FileSystemEventHandler(OnChanged);
+            // watcher.Error += new FileSystemEventHandler(OnError);
+
+
             watcher.EnableRaisingEvents = true;
 
             Console.WriteLine("Press enter to exit.");
@@ -37,29 +37,20 @@ namespace ConsoleApp4.BusinessLayer
             }
             while (IsFileLocked(e.FullPath))
             {}
-
             string[] lines = File.ReadAllLines(e.FullPath);
-
             // Parse the lines into a 2D array of string values
             string[][] data = lines.Select(l => l.Split(',')).ToArray(); // all the data from the csv
-            printData(data);
+            //printData(data);
             int i=0;
-            int k = 0;
             foreach (String[] row in data)
             {
-                if(i==1)
-                    TradeCon.Insert(new DataAccessLayer.DTOs.TradeBiDTO(row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13],row[14],row[15],row[16],row[17],row[18],row[19],row[20],row[21],row[22],row[23])); //inserts all of the new columns of the new board to the database.
+
+                if (i == 1)
+                    TradeCon.InsertAsync(new DataAccessLayer.DTOs.TradeBiDTO(row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],row[10],row[11],row[12],row[13],row[14],row[15],row[16],row[17],row[18],row[19],row[20],row[21],row[22],row[23])); //inserts all of the new columns of the new board to the database.
                 if(i!=1)
                     i=1;
-                
-                StreamWriter sw = new StreamWriter("log.txt", true);
-                sw.WriteLine("Log message 1");
-                sw.Close();
+   
             }
-            
-            
-            //  k=k+1;
-            // Console.WriteLine(k);
             Console.WriteLine($"Changed: {e.FullPath}");
         }
 
@@ -68,14 +59,13 @@ namespace ConsoleApp4.BusinessLayer
 
         private static void PrintException(Exception ex)
         {
-            if (ex != null)
-            {
-                Console.WriteLine($"Message: {ex.Message}");
-                Console.WriteLine("Stacktrace:");
-                Console.WriteLine(ex.StackTrace);
-                Console.WriteLine();
-                PrintException(ex.InnerException);
-            }
+            //if (ex != null)
+            //{
+               // Console.WriteLine($"Message: {ex.Message}");
+               // StreamWriter sw = new StreamWriter("log.txt", true);
+               // sw.WriteLine($"Message: {ex.Message}");
+               // sw.Close();
+            //}
         }
 
         public static void printData(string[][] data)
@@ -111,6 +101,11 @@ namespace ConsoleApp4.BusinessLayer
 
         private static void checkData(string[] data)
         {
+            if(data[0].Length > 100)
+            {
+                throw new DataDefinitionException("The length of the field TradeID can reach a maximum of 100 characters");
+            }
+
 
         }
     }
