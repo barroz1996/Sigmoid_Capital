@@ -1,2 +1,26 @@
 Violation of PRIMARY KEY constraint 'PK__TableBIT__A1D81DE267385023'. Cannot insert duplicate key in object 'dbo.TableBIT'. The duplicate key value is (Incubation7BinanceB002BTCUSDT45012.7726758.344                                                      ).
 The statement has been terminated.
+Violation of PRIMARY KEY constraint 'PK__TableBIT__A1D81DE267385023'. Cannot insert duplicate key in object 'dbo.TableBIT'. The duplicate key value is (Incubation7BinanceB002BTCUSDT45012.7726758.38                                                       ).
+The statement has been terminated.
+The record details: Incubation7BinanceB002BTCUSDT45012.7726758.38,Algo,Binance,BTCUSDT,B002,100208.4,ReversalPnF,Incubation7,Long,Profit Target,27/03/2023 18:13,27/03/2023 18:26
+Violation of PRIMARY KEY constraint 'PK__TableBIT__A1D81DE267385023'. Cannot insert duplicate key in object 'dbo.TableBIT'. The duplicate key value is (Incubation7BinanceB002BTCUSDT45012.7726758.38                                                       ).
+The statement has been terminated.
+The record details: Incubation7BinanceB002BTCUSDT45012.7726758.38,Algo,Binance,BTCUSDT,B002,100208.4,ReversalPnF,Incubation7,Long,Profit Target,27/03/2023 18:13,27/03/2023 18:26
+Violation of PRIMARY KEY constraint 'PK__TableBIT__A1D81DE267385023'. Cannot insert duplicate key in object 'dbo.TableBIT'. The duplicate key value is (Incubation7BinanceB002BTCUSDT45012.7726758.38                                                       ).
+The statement has been terminated.
+The record details: Incubation7BinanceB002BTCUSDT45012.7726758.38,Algo,Binance,BTCUSDT,B002,100208.4,ReversalPnF,Incubation7,Long,Profit Target,27/03/2023 18:13,27/03/2023 18:26
+Violation of PRIMARY KEY constraint 'PK__TableBIT__A1D81DE267385023'. Cannot insert duplicate key in object 'dbo.TableBIT'. The duplicate key value is (Incubation7BinanceB002BTCUSDT45012.7726758.3812                                                     ).
+The statement has been terminated.
+The record details: Incubation7BinanceB002BTCUSDT45012.7726758.3812,Algo,Binance,BTCUSDT,B002,100208.4,ReversalPnF,Incubation7,Long,Profit Target,27/03/2023 18:13,27/03/2023 18:26
+Violation of PRIMARY KEY constraint 'PK__TableBIT__A1D81DE267385023'. Cannot insert duplicate key in object 'dbo.TableBIT'. The duplicate key value is (Incubation7BinanceB002BTCUSDT45012.7726758.381235                                                   ).
+The statement has been terminated.
+The record details: Incubation7BinanceB002BTCUSDT45012.7726758.381235,Algo,Binance,BTCUSDT,B002,100208.4,ReversalPnF,Incubation7,Long,Profit Target,27/03/2023 18:13,27/03/2023 18:26
+Violation of PRIMARY KEY constraint 'PK__TableBIT__A1D81DE267385023'. Cannot insert duplicate key in object 'dbo.TableBIT'. The duplicate key value is (Incubation7BinanceB002BTCUSDT45012.7726758.3812                                                     ).
+The statement has been terminated.
+The record details: Incubation7BinanceB002BTCUSDT45012.7726758.3812,Algo,Binance,BTCUSDT,B002,100208.4,ReversalPnF,Incubation7,Long,Profit Target,27/03/2023 18:13,27/03/2023 18:26
+Violation of PRIMARY KEY constraint 'PK__TableBIT__A1D81DE267385023'. Cannot insert duplicate key in object 'dbo.TableBIT'. The duplicate key value is (Incubation7BinanceB002BTCUSDT45012.7726758.381235                                                   ).
+The statement has been terminated.
+The record details: Incubation7BinanceB002BTCUSDT45012.7726758.381235,Algo,Binance,BTCUSDT,B002,100208.4,ReversalPnF,Incubation7,Long,Profit Target,27/03/2023 18:13,27/03/2023 18:26
+Violation of PRIMARY KEY constraint 'PK__TableBIT__A1D81DE267385023'. Cannot insert duplicate key in object 'dbo.TableBIT'. The duplicate key value is (Incubation7BinanceB002BTCUSDT45012.7726758.381235                                                   ).
+The statement has been terminated.
+The record details: Incubation7BinanceB002BTCUSDT45012.7726758.381235,Algo,Binance,BTCUSDT,B002,100208.4,ReversalPnF,Incubation7,Long,Profit Target,27/03/2023 18:13,27/03/2023 18:26

@@ -131,11 +131,12 @@ namespace ConsoleApp4.DataAccessLayer.Controllers
                 {
                     StreamWriter sw = new StreamWriter("log.txt", true);
                     sw.WriteLine(e.Message);
+                    sw.WriteLine("The record details: " + Trade.TradeposTradeID + "," + Trade.TradetraderName + "," + Trade.TradebrokerName + "," + Trade.TradeSymbol + "," + Trade.TradeaccountID + "," + Trade.TradeaccountSize + "," + Trade.TradecurrStrategyName + "," + Trade.TradetradeProfile + "," + Trade.TradeentryType + "," + Trade.TradeexitType + "," + Trade.TradestartDate + "," + Trade.TradeendDate);
                     sw.Close();
                     // Console.WriteLine(e);
                     // var WebHookUrl = "https://hooks.slack.com/services/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";
                     
-
+                    /*
                     var errorObj = new
                     {
                         Message = e.Message,
@@ -147,11 +148,11 @@ namespace ConsoleApp4.DataAccessLayer.Controllers
                         Error = errorJson
                     };
                     var mainJson = JsonConvert.SerializeObject(mainObj);
-                    Console.WriteLine(mainJson);
+                   */
                     // var httpClient = new HttpClient();
                     // var webhookUrl = "https://hooks.slack.com/services/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";
                     // var payload = "{\"text\": \"Hello, Slack!\"}";
-                     //var content = new StringContent(mainJson, Encoding.UTF8, "application/json");
+                    //var content = new StringContent(mainJson, Encoding.UTF8, "application/json");
                     // var response = await httpClient.PostAsync(webhookUrl, content);
                 }
                 finally
