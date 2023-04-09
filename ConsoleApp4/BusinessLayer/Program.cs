@@ -23,7 +23,7 @@ namespace ConsoleApp4.BusinessLayer
            
                 string fileContents = reader.ReadToEnd();
                 if (fileContents.Length > 0)
-                    InsertData(fileContents);
+                    InsertData(fileContents,true);
                 Console.WriteLine(fileContents);
 
             }
@@ -32,16 +32,43 @@ namespace ConsoleApp4.BusinessLayer
 
             var watcher = new FileSystemWatcher(@"C:\Users\Lenovo\Desktop\Sigmoid");
             watcher.Filter = "*.csv";
+            watcher.NotifyFilter = NotifyFilters.Attributes
+                             | NotifyFilters.CreationTime
+                             | NotifyFilters.LastWrite;
+            watcher.IncludeSubdirectories = true;
+            watcher.Created += new FileSystemEventHandler(OnCreated); 
             watcher.Changed += new FileSystemEventHandler(OnChanged);
             watcher.EnableRaisingEvents = true;
 
             Console.WriteLine("Press enter to exit.");
             Console.ReadLine();
         }
-      
+
+        private static void OnCreated(object sender, FileSystemEventArgs e)
+        {
+       
+            Console.WriteLine("1");
+            string fileName = "myfile.txt";
+            if (!string.IsNullOrEmpty(e.FullPath))
+            {
+                Console.WriteLine("2");
+                using (StreamWriter writer = new StreamWriter(fileName))
+                {
+                    writer.Write(e.FullPath);
+                }
+                Console.WriteLine("3");
+                InsertDataToSql(e);
+                Console.WriteLine("4");
+            }
+        }
         private static void OnChanged(object sender, FileSystemEventArgs e)
         {
-
+            
+            if (e.ChangeType != WatcherChangeTypes.Changed)
+            {
+               return;
+            }
+         
             string fileName = "myfile.txt";
             if (!string.IsNullOrEmpty(e.FullPath))
             {
@@ -63,7 +90,7 @@ namespace ConsoleApp4.BusinessLayer
 
      
 
-        private static void InsertData(string path) {
+        private static void InsertData(string path, bool crash) {
             while (IsFileLocked(path))
             { }
             string[] lines = File.ReadAllLines(path);
@@ -73,7 +100,7 @@ namespace ConsoleApp4.BusinessLayer
             {
 
                 if (i == 1)
-                    TradeCon.InsertAsync(new DataAccessLayer.DTOs.TradeBiDTO(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], row[19], row[20], row[21], row[22], row[23])); //inserts all of the new columns of the new board to the database.
+                    TradeCon.InsertAsync(new DataAccessLayer.DTOs.TradeBiDTO(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], row[19], row[20], row[21], row[22], row[23]),crash); //inserts all of the new columns of the new board to the database.
                 if (i != 1)
                     i = 1;
 
@@ -83,11 +110,8 @@ namespace ConsoleApp4.BusinessLayer
 
         private static void InsertDataToSql(FileSystemEventArgs e)
         {
-            if (e.ChangeType != WatcherChangeTypes.Changed)
-            {
-                return;
-            }
-            InsertData(e.FullPath);
+      
+            InsertData(e.FullPath,false);
             CleanTxt(nameOfLastCsv);   
             Console.WriteLine($"Changed: {e.FullPath}");
         }
