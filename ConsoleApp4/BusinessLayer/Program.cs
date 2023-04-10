@@ -14,11 +14,11 @@ namespace ConsoleApp4.BusinessLayer
 {
     class Program
     {   
-        private static DataAccessLayer.Controllers.TradeBi TradeCon = new DataAccessLayer.Controllers.TradeBi();
-        static string nameOfLastCsv = "myfile.txt";
+        private static DataAccessLayer.Controllers.TradeBi TradeCon = new DataAccessLayer.Controllers.TradeBi();  // control of data access layer
+        static string nameOfLastCsv = "myfile.txt";  // Txt file to save the last csv file.
         static void Main(string[] args)
         {
-            using (StreamReader reader = new StreamReader(nameOfLastCsv))
+            using (StreamReader reader = new StreamReader(nameOfLastCsv))  // Firstly we check here if we had crash before we run the system, if we had it will read from the txt file the last csv file that was problematic
             {
            
                 string fileContents = reader.ReadToEnd();
@@ -27,10 +27,9 @@ namespace ConsoleApp4.BusinessLayer
                 Console.WriteLine(fileContents);
 
             }
-            CleanTxt(nameOfLastCsv);
-      
-
-            var watcher = new FileSystemWatcher(@"C:\Users\Lenovo\Desktop\Sigmoid");
+            CleanTxt(nameOfLastCsv);   // After we read the problematic csv file we clean the txt file
+     
+            var watcher = new FileSystemWatcher(@"C:\Users\Lenovo\Desktop\Sigmoid");  // Here we give the path of the directory!
             watcher.Filter = "*.csv";
             watcher.NotifyFilter = NotifyFilters.Attributes
                              | NotifyFilters.CreationTime
@@ -44,31 +43,9 @@ namespace ConsoleApp4.BusinessLayer
             Console.ReadLine();
         }
 
-        private static void OnCreated(object sender, FileSystemEventArgs e)
+        // When csv created it will write it to the sql
+        private static void OnCreated(object sender, FileSystemEventArgs e)  
         {
-       
-            Console.WriteLine("1");
-            string fileName = "myfile.txt";
-            if (!string.IsNullOrEmpty(e.FullPath))
-            {
-                Console.WriteLine("2");
-                using (StreamWriter writer = new StreamWriter(fileName))
-                {
-                    writer.Write(e.FullPath);
-                }
-                Console.WriteLine("3");
-                InsertDataToSql(e);
-                Console.WriteLine("4");
-            }
-        }
-        private static void OnChanged(object sender, FileSystemEventArgs e)
-        {
-            
-            if (e.ChangeType != WatcherChangeTypes.Changed)
-            {
-               return;
-            }
-         
             string fileName = "myfile.txt";
             if (!string.IsNullOrEmpty(e.FullPath))
             {
@@ -80,7 +57,26 @@ namespace ConsoleApp4.BusinessLayer
             }
         }
 
-        private static void CleanTxt(string filePath)
+        // When csv file changed in the directory it will write it to sql
+        private static void OnChanged(object sender, FileSystemEventArgs e) 
+        {           
+            if (e.ChangeType != WatcherChangeTypes.Changed)
+            {
+               return;
+            }
+            string fileName = "myfile.txt";
+            if (!string.IsNullOrEmpty(e.FullPath))
+            {
+                using (StreamWriter writer = new StreamWriter(fileName))
+                {
+                    writer.Write(e.FullPath);
+                }
+                InsertDataToSql(e);
+            }
+        }
+        
+        // Clean saved csv name file
+        private static void CleanTxt(string filePath)  
         {
             using (StreamWriter writer = new StreamWriter(filePath))
             {
@@ -88,51 +84,53 @@ namespace ConsoleApp4.BusinessLayer
             }
         }
 
-     
-
+    
+        // Read the csv file and insert the data to sql
         private static void InsertData(string path, bool crash) {
             while (IsFileLocked(path))
             { }
-            string[] lines = File.ReadAllLines(path);
-            string[][] data = lines.Select(l => l.Split(',')).ToArray();
-            int i = 0;
-            foreach (String[] row in data)
+            try
             {
-
-                if (i == 1)
-                    TradeCon.InsertAsync(new DataAccessLayer.DTOs.TradeBiDTO(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], row[19], row[20], row[21], row[22], row[23]),crash); //inserts all of the new columns of the new board to the database.
-                if (i != 1)
-                    i = 1;
-
+                string[] lines = File.ReadAllLines(path);
+                string[][] data = lines.Select(l => l.Split(',')).ToArray();
+                checkCsvTable(data);
+                int i = 0;
+                foreach (String[] row in data)
+                {
+                    if (i == 1)
+                        TradeCon.InsertAsync(new DataAccessLayer.DTOs.TradeBiDTO(row[0], row[1], row[2], row[3], row[4], row[5], row[6], row[7], row[8], row[9], row[10], row[11], row[12], row[13], row[14], row[15], row[16], row[17], row[18], row[19], row[20], row[21], row[22], row[23]), crash); //inserts all of the new columns of the new board to the database.
+                    if (i != 1)
+                        i = 1;
+                }
+            }
+            catch(Exception e)
+            {
+                StreamWriter sw = new StreamWriter("log.txt", true);
+                sw.WriteLine();
+                sw.WriteLine(e.Message);
+                sw.Close();
             }
         }
 
-
         private static void InsertDataToSql(FileSystemEventArgs e)
         {
-      
             InsertData(e.FullPath,false);
             CleanTxt(nameOfLastCsv);   
             Console.WriteLine($"Changed: {e.FullPath}");
         }
 
 
-
-        private static void OnError(object sender, ErrorEventArgs e) =>
-            PrintException(e.GetException());
-
-        private static void PrintException(Exception ex)
+        private static void checkCsvTable(string[][] data)
         {
-            //if (ex != null)
-            //{
-               // Console.WriteLine($"Message: {ex.Message}");
-               // StreamWriter sw = new StreamWriter("log.txt", true);
-               // sw.WriteLine($"Message: {ex.Message}");
-               // sw.Close();
-            //}
+            if (data[0].Length != 24)
+            {
+                CleanTxt(nameOfLastCsv); // if we have problem with the csv size we dont want to save the csv path when we rerun the program!
+                StreamWriter sw = new StreamWriter("log.txt", true);
+                sw.WriteLine();
+                sw.WriteLine("The csv table size columns is not 24 like the format!. The size columns of the file is +" + data.GetLength(1));
+                sw.Close();
+            }
         }
-
-
 
         private static bool IsFileLocked(string filePath)
         {
@@ -153,15 +151,9 @@ namespace ConsoleApp4.BusinessLayer
             }
         }
 
-        private static void checkData(string[] data)
-        {
-            if(data[0].Length > 100)
-            {
-                throw new DataDefinitionException("The length of the field TradeID can reach a maximum of 100 characters");
-            }
-        }
 
-        public static void printData(string[][] data)
+        // print the csv file data
+        private static void printData(string[][] data)
         {
             foreach (string[] row in data)
             {
@@ -172,8 +164,27 @@ namespace ConsoleApp4.BusinessLayer
                 Console.WriteLine();
             }
         }
+
+      
+
+        /*
+  private static void OnError(object sender, ErrorEventArgs e) =>
+      PrintException(e.GetException());
+
+  private static void PrintException(Exception ex)
+  {
+      //if (ex != null)
+      //{
+         // Console.WriteLine($"Message: {ex.Message}");
+         // StreamWriter sw = new StreamWriter("log.txt", true);
+         // sw.WriteLine($"Message: {ex.Message}");
+         // sw.Close();
+      //}
+  }
+
+  */
     }
- }
+}
 
        
 
