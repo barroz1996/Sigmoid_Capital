@@ -7,38 +7,29 @@ using Microsoft.Extensions.Logging;
 using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
 using static System.Net.WebRequestMethods;
 using File = System.IO.File;
+using Microsoft.Office.Interop.Excel;
 
 namespace ConsoleApp4.BusinessLayer
-
-
 {
     class Program
     {   
         private static DataAccessLayer.Controllers.TradeBi TradeCon = new DataAccessLayer.Controllers.TradeBi();  // control of data access layer
         static string nameOfLastCsv = "myfile.txt";  // Txt file to save the last csv file.
+        static string errorsTxt = "log.txt";
         static void Main(string[] args)
         {
-            using (StreamReader reader = new StreamReader(nameOfLastCsv))  // Firstly we check here if we had crash before we run the system, if we had it will read from the txt file the last csv file that was problematic
-            {
-           
-                string fileContents = reader.ReadToEnd();
-                if (fileContents.Length > 0)
-                    InsertData(fileContents,true);
-                Console.WriteLine(fileContents);
-
-            }
-            CleanTxt(nameOfLastCsv);   // After we read the problematic csv file we clean the txt file
-     
+            checkLastCsvFile();
             var watcher = new FileSystemWatcher(@"C:\Users\Lenovo\Desktop\Sigmoid");  // Here we give the path of the directory!
+            //watcher.InternalBufferSize = 64 * 1024;
             watcher.Filter = "*.csv";
             watcher.NotifyFilter = NotifyFilters.Attributes
                              | NotifyFilters.CreationTime
                              | NotifyFilters.LastWrite;
             watcher.IncludeSubdirectories = true;
+            Thread.Sleep(1000);
             watcher.Created += new FileSystemEventHandler(OnCreated); 
             watcher.Changed += new FileSystemEventHandler(OnChanged);
             watcher.EnableRaisingEvents = true;
-
             Console.WriteLine("Press enter to exit.");
             Console.ReadLine();
         }
@@ -46,35 +37,24 @@ namespace ConsoleApp4.BusinessLayer
         // When csv created it will write it to the sql
         private static void OnCreated(object sender, FileSystemEventArgs e)  
         {
-            string fileName = "myfile.txt";
-            if (!string.IsNullOrEmpty(e.FullPath))
+            if (e.ChangeType != WatcherChangeTypes.Changed)
             {
-                using (StreamWriter writer = new StreamWriter(fileName))
-                {
-                    writer.Write(e.FullPath);
-                }
-                InsertDataToSql(e);
+                return;
             }
+            writePathOfLastCsvAndInsert(nameOfLastCsv, e);
+            Thread.Sleep(1000);
+
         }
 
         // When csv file changed in the directory it will write it to sql
         private static void OnChanged(object sender, FileSystemEventArgs e) 
-        {           
-            if (e.ChangeType != WatcherChangeTypes.Changed)
-            {
-               return;
-            }
-            string fileName = "myfile.txt";
-            if (!string.IsNullOrEmpty(e.FullPath))
-            {
-                using (StreamWriter writer = new StreamWriter(fileName))
-                {
-                    writer.Write(e.FullPath);
-                }
-                InsertDataToSql(e);
-            }
+        {
+         
+            writePathOfLastCsvAndInsert(nameOfLastCsv, e);
+            Thread.Sleep(1000);
+
         }
-        
+
         // Clean saved csv name file
         private static void CleanTxt(string filePath)  
         {
@@ -83,7 +63,6 @@ namespace ConsoleApp4.BusinessLayer
                 writer.Write("");
             }
         }
-
     
         // Read the csv file and insert the data to sql
         private static void InsertData(string path, bool crash) {
@@ -105,13 +84,11 @@ namespace ConsoleApp4.BusinessLayer
             }
             catch(Exception e)
             {
-                StreamWriter sw = new StreamWriter("log.txt", true);
-                sw.WriteLine();
-                sw.WriteLine(e.Message);
-                sw.Close();
+                writeToTxtFile(errorsTxt, e.Message);
             }
         }
 
+        // Insert the data we read from the csv file into the sql table
         private static void InsertDataToSql(FileSystemEventArgs e)
         {
             InsertData(e.FullPath,false);
@@ -119,19 +96,17 @@ namespace ConsoleApp4.BusinessLayer
             Console.WriteLine($"Changed: {e.FullPath}");
         }
 
-
+        // Check the csv structure 
         private static void checkCsvTable(string[][] data)
         {
             if (data[0].Length != 24)
             {
                 CleanTxt(nameOfLastCsv); // if we have problem with the csv size we dont want to save the csv path when we rerun the program!
-                StreamWriter sw = new StreamWriter("log.txt", true);
-                sw.WriteLine();
-                sw.WriteLine("The csv table size columns is not 24 like the format!. The size columns of the file is +" + data.GetLength(1));
-                sw.Close();
+                writeToTxtFile(errorsTxt, "The csv table size columns is not 24 like the format!. The size columns of the file is +" + data.GetLength(1));
             }
         }
 
+        // Check if the file is open
         private static bool IsFileLocked(string filePath)
         {
             try
@@ -151,6 +126,50 @@ namespace ConsoleApp4.BusinessLayer
             }
         }
 
+        // When we rerun the system
+        private static void checkLastCsvFile()
+        {
+            try
+            {
+                using (StreamReader reader = new StreamReader(nameOfLastCsv))  // Firstly we check here if we had crash before we run the system, if we had it will read from the txt file the last csv file that was problematic
+                {
+                    string fileContents = reader.ReadToEnd();
+                    if (fileContents.Length > 0)
+                    {
+                        InsertData(fileContents, true);
+                        Console.WriteLine(fileContents);
+                    }
+
+                }
+                CleanTxt(nameOfLastCsv);
+            }
+            catch (Exception e)
+            {
+                writeToTxtFile(errorsTxt, e.Message);
+            }
+        }
+
+        // Save the text to Txt file
+        private static void writeToTxtFile(string path, string message)
+        {
+            StreamWriter sw = new StreamWriter(path, true);
+            sw.WriteLine();
+            sw.WriteLine(message);
+            sw.Close();
+        }
+
+        // When systemed crashed when we rerun it will complete the mission with the last file
+        private static void writePathOfLastCsvAndInsert(string path, FileSystemEventArgs e)
+        {
+            if (!string.IsNullOrEmpty(e.FullPath))
+            {
+                using (StreamWriter writer = new StreamWriter(path))
+                {
+                    writer.Write(e.FullPath);
+                }
+                InsertDataToSql(e);
+            }
+        }
 
         // print the csv file data
         private static void printData(string[][] data)
@@ -164,8 +183,6 @@ namespace ConsoleApp4.BusinessLayer
                 Console.WriteLine();
             }
         }
-
-      
 
         /*
   private static void OnError(object sender, ErrorEventArgs e) =>
@@ -185,10 +202,3 @@ namespace ConsoleApp4.BusinessLayer
   */
     }
 }
-
-       
-
-     
-       
-   
-

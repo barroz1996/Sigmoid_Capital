@@ -7,7 +7,8 @@ using Microsoft.Extensions.Logging;
 
 namespace ConsoleApp4.DataAccessLayer.DTOs
 {
-    class TradeBiDTO    // Type of csv table we get and parsing to sql
+    // Type of csv table we get and parsing to sql
+    class TradeBiDTO   
     {
         public const string TradeBIposTradeID = "TradeID";
         public const string TradeBItraderName = "Trader";
@@ -33,7 +34,6 @@ namespace ConsoleApp4.DataAccessLayer.DTOs
         public const string TradeBIdrawDownPercent = "DrawDownPercent";
         public const string TradeBIrunUp = "RunUp";
         public const string TradeBIrunUpPrecent = "RunUpPercent";
-  
     
         private readonly Controllers.TradeBi _controller;
 
@@ -66,11 +66,6 @@ namespace ConsoleApp4.DataAccessLayer.DTOs
            TradedrawDownPercent = Drawdown_percent;
            TraderunUp = Run_up;
            TraderunUpPercent = Run_up_percernt;
-
-
-
-
-
 
             _controller = new Controllers.TradeBi();
         }

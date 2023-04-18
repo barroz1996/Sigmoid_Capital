@@ -22,6 +22,7 @@ namespace ConsoleApp4.DataAccessLayer.Controllers
         {
         }
 
+        // Insert data to sql table 
         public async Task<bool> InsertAsync(DTOs.TradeBiDTO Trade,bool crash) //Creates a new task in the database.
         {
             using (var connection = new SqlConnection(@"Data Source=DESKTOP-0G3N8AU;Initial Catalog=TradeBIDataBase;Integrated Security=True"))
@@ -37,7 +38,6 @@ namespace ConsoleApp4.DataAccessLayer.Controllers
                     cmd.Parameters.AddWithValue("@broker", Trade.TradebrokerName);
                     cmd.Parameters.AddWithValue("@symbol", Trade.TradeSymbol);
                     cmd.Parameters.AddWithValue("@accountID", Trade.TradeaccountID);
-
                     if (!string.Equals(Trade.TradeaccountSize, "Null"))
                         cmd.Parameters.AddWithValue("@accountSize", float.Parse(Trade.TradeaccountSize));
                     else
@@ -46,7 +46,6 @@ namespace ConsoleApp4.DataAccessLayer.Controllers
                     cmd.Parameters.AddWithValue("@profile", Trade.TradetradeProfile);
                     cmd.Parameters.AddWithValue("@entryType", Trade.TradeentryType);
                     cmd.Parameters.AddWithValue("@exitType", Trade.TradeexitType);
-
                     if (!string.Equals(Trade.TradestartDate, "Null"))
                         cmd.Parameters.AddWithValue("@startDate", DateTime.Parse(Trade.TradestartDate));
                     else

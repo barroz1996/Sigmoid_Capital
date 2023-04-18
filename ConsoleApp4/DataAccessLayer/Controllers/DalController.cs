@@ -13,8 +13,7 @@ namespace ConsoleApp4.DataAccessLayer
         public DalController(string tableName)
         { 
            // string connectionString = @"Data Source=DESKTOP-0G3N8AU;Initial Catalog=TableBIDataBase;Integrated Security=True";
-            _tableName = tableName;
-           
+            _tableName = tableName;        
         }
     
     
