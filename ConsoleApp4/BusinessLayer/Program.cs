@@ -8,6 +8,9 @@ using System.Data.Entity.Core.Common.CommandTrees.ExpressionBuilder;
 using static System.Net.WebRequestMethods;
 using File = System.IO.File;
 using Microsoft.Office.Interop.Excel;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace ConsoleApp4.BusinessLayer
 {
@@ -65,7 +68,7 @@ namespace ConsoleApp4.BusinessLayer
         }
     
         // Read the csv file and insert the data to sql
-        private static void InsertData(string path, bool crash) {
+        private static async Task InsertDataAsync(string path, bool crash) {
             while (IsFileLocked(path))
             { }
             try
@@ -85,13 +88,32 @@ namespace ConsoleApp4.BusinessLayer
             catch(Exception e)
             {
                 writeToTxtFile(errorsTxt, e.Message);
+                sendEceptionMessageSlackAsync(e);
             }
+        }
+
+
+        // Send message into slack channel
+        private static async Task sendEceptionMessageSlackAsync(Exception e)
+        {
+            string a = e.Message + "";
+            var json = new
+            {
+                text = a
+            };
+
+            var jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(json);
+            var httpClient = new HttpClient();
+            var webhookUrl = "https://hooks.slack.com/services/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";
+            // var payload = "{\"text\": \"Hello, Slack \"}";
+            var content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+            var response = await httpClient.PostAsync(webhookUrl, content);
         }
 
         // Insert the data we read from the csv file into the sql table
         private static void InsertDataToSql(FileSystemEventArgs e)
         {
-            InsertData(e.FullPath,false);
+            InsertDataAsync(e.FullPath,false);
             CleanTxt(nameOfLastCsv);   
             Console.WriteLine($"Changed: {e.FullPath}");
         }
@@ -136,7 +158,7 @@ namespace ConsoleApp4.BusinessLayer
                     string fileContents = reader.ReadToEnd();
                     if (fileContents.Length > 0)
                     {
-                        InsertData(fileContents, true);
+                        InsertDataAsync(fileContents, true);
                         Console.WriteLine(fileContents);
                     }
 
@@ -146,6 +168,7 @@ namespace ConsoleApp4.BusinessLayer
             catch (Exception e)
             {
                 writeToTxtFile(errorsTxt, e.Message);
+                sendEceptionMessageSlackAsync(e);
             }
         }
 
@@ -185,20 +208,20 @@ namespace ConsoleApp4.BusinessLayer
         }
 
         /*
-  private static void OnError(object sender, ErrorEventArgs e) =>
-      PrintException(e.GetException());
+               private static void OnError(object sender, ErrorEventArgs e) =>
+                   sendEceptionMessageSlackAsync(e.GetException());
 
-  private static void PrintException(Exception ex)
-  {
-      //if (ex != null)
-      //{
-         // Console.WriteLine($"Message: {ex.Message}");
-         // StreamWriter sw = new StreamWriter("log.txt", true);
-         // sw.WriteLine($"Message: {ex.Message}");
-         // sw.Close();
-      //}
-  }
+                 private static void PrintException(Exception ex)
+                 {
+                     //if (ex != null)
+                     //{
+                        // Console.WriteLine($"Message: {ex.Message}");
+                        // StreamWriter sw = new StreamWriter("log.txt", true);
+                        // sw.WriteLine($"Message: {ex.Message}");
+                        // sw.Close();
+                     //}
+                 }
 
-  */
+                 */
     }
 }

@@ -13,6 +13,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using System.Linq;
 
 namespace ConsoleApp4.DataAccessLayer.Controllers
 {
@@ -20,6 +21,20 @@ namespace ConsoleApp4.DataAccessLayer.Controllers
     {
         public TradeBi() : base("TradeBI")
         {
+        }
+        public static Dictionary<string, string> GetExceptionDetails(Exception exception)
+        {
+            var properties = exception.GetType()
+                .GetProperties();
+            var fields = properties
+                .Select(property => new
+                {
+                    Name = property.Name,
+                    Value = property.GetValue(exception, null)
+                })
+                .Select(x => $"{x.Name} = {(x.Value != null ? x.Value.ToString() : string.Empty)}")
+                .ToDictionary(k => k, v => v);
+            return fields;
         }
 
         // Insert data to sql table 
@@ -126,28 +141,31 @@ namespace ConsoleApp4.DataAccessLayer.Controllers
                         sw.WriteLine(e.Message);
                         sw.WriteLine("The record details: " + Trade.TradeposTradeID + "," + Trade.TradetraderName + "," + Trade.TradebrokerName + "," + Trade.TradeSymbol + "," + Trade.TradeaccountID + "," + Trade.TradeaccountSize + "," + Trade.TradecurrStrategyName + "," + Trade.TradetradeProfile + "," + Trade.TradeentryType + "," + Trade.TradeexitType + "," + Trade.TradestartDate + "," + Trade.TradeendDate + "," + Trade.Tradeduration + "," + Trade.TradecurrEntryPrice + "," + Trade.TradecurrExitPrice + "," + Trade.TradetradeContracts + "," + Trade.TradepositionSize + "," + Trade.TradetradeMargin + "," + Trade.TradetradeCommission + "," + Trade.Tradeprofit + "," + Trade.TradedrawDown + "," + Trade.TradedrawDownPercent + "," + Trade.TradedrawDownPercent + "," + Trade.TraderunUp + "," + Trade.TraderunUpPercent);
                         sw.Close();
-                        // Console.WriteLine(e);
-                        // var WebHookUrl = "https://hooks.slack.com/services/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";
+                       
+                        
+                      
+                        var errorJson = JsonConvert.SerializeObject(GetExceptionDetails(e));
+                        // var mainObj = new
+                        // {
+                        //     Error = errorJson
+                        // };
 
-                        /*
-                        var errorObj = new
+                        // var mainJson = JsonConvert.SerializeObject(mainObj);
+                        string a = e.Message + "";
+                        var json = new
                         {
-                            Message = e.Message,
+                            text = a
+                        };
 
-                        };
-                        var errorJson = JsonConvert.SerializeObject(errorObj);
-                        var mainObj = new
-                        {
-                            Error = errorJson
-                        };
-                        var mainJson = JsonConvert.SerializeObject(mainObj);
-                       */
-                        // var httpClient = new HttpClient();
-                        // var webhookUrl = "https://hooks.slack.com/services/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";
-                        // var payload = "{\"text\": \"Hello, Slack!\"}";
-                        //var content = new StringContent(mainJson, Encoding.UTF8, "application/json");
-                        // var response = await httpClient.PostAsync(webhookUrl, content);
-                     }
+                        var jsonString = Newtonsoft.Json.JsonConvert.SerializeObject(json);
+
+                        Console.WriteLine(jsonString);
+                        var httpClient = new HttpClient();
+                        var webhookUrl = "https://hooks.slack.com/services/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";
+                       // var payload = "{\"text\": \" \"}";
+                        var content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+                        var response = await httpClient.PostAsync(webhookUrl, content);
+                    }
                 }
                 finally
                 {
